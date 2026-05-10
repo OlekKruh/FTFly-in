@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import List
-from src.entities.world_map import World
 from src.utils_func.exit_func import error_exit
 
 
@@ -47,7 +46,7 @@ class FileParser:
     def dispatch(self, line_list: List):
         if line_list[0] == "nb_drones":
             try:
-                self.world.drones_quantity = int(line_list[1])
+                self.world.drones_quantity = int(line_list[1][0])
             except TypeError as e:
                 error_exit(f"Error: {e}")
         elif line_list[0] in ["start_hub", "hub", "end_hub"]:
@@ -56,7 +55,8 @@ class FileParser:
             except IndexError as e:
                 error_exit(f"Error: {e}")
         elif line_list[0] == "connection":
-            self.world.add_relation_to_map(line_list)
+            # TODO
+            self.world.add_relation_to_map()
 
     def pars_map(self):
         """

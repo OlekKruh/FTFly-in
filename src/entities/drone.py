@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from zone import Zone
+from .zone import Zone
 
 
 @dataclass
