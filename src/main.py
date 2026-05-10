@@ -28,6 +28,7 @@ def main():
     x.pars_map()
     for key, value in world_obj.zones_map.items():
         print(f"🔑 {key}: {value}")
+    print("fin")
 
 if __name__ == "__main__":
     main()
