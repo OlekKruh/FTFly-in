@@ -1,0 +1,11 @@
+# Files
+.env
+.flake8
+.DS_Store
+src/.DS_Store
+
+# Derectoris
+maps/
+.venv/
+.idea/
+__pycache__/

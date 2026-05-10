@@ -1,0 +1,9 @@
+class App:
+
+    def open_menu(self):
+        ...
+
+    def run_simulation(self, map_path: str):
+        ...
+
+    ...
