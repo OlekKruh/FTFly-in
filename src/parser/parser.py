@@ -46,14 +46,32 @@ class FileParser:
     def dispatch(self, line_list: List):
         if line_list[0] == "nb_drones":
             try:
+                if len(line_list[1]) != 1:
+                    error_exit(f"Error: 'nb_drones' expects 1 value, "
+                               f"got {len(line_list[1])}")
                 self.world.drones_quantity = int(line_list[1][0])
-            except TypeError as e:
+            except (ValueError, IndexError, TypeError) as e:
                 error_exit(f"Error: {e}")
+
         elif line_list[0] in ["start_hub", "hub", "end_hub"]:
             try:
-                self.world.add_zone_to_map(line_list[1], line_list[2])
-            except IndexError as e:
-                error_exit(f"Error: {e}")
+                main_param = line_list[1]
+                if len(main_param) != 3:
+                    error_exit(f"Error: {line_list[0]} expects [name, x, y],"
+                               f" got {main_param}")
+                hub_name, hub_x, hub_y = (
+                    line_list[1][0],
+                    int(line_list[1][1]),
+                    int(line_list[1][2])
+                )
+                self.world.add_zone_to_map(
+                    [hub_name, hub_x, hub_y],
+                    line_list[2]
+                )
+            except (ValueError, IndexError) as e:
+                error_exit(f"Error: Invalid main parameters format "
+                           f"or missing values. {e}")
+
         elif line_list[0] == "connection":
             # TODO
             self.world.add_relation_to_map()
@@ -62,10 +80,17 @@ class FileParser:
         """
         read by line & coll dispatch
         """
-        if not self.path.is_file():
-            error_exit("Invalid map path!")
-        with self.path.open(encoding="utf-8") as file:
-            for line in file:
-                data_list = self.line_to_list(line)
-                if data_list:
-                    self.dispatch(data_list)
+        try:
+            with self.path.open(encoding="utf-8") as file:
+                for line in file:
+                    data_list = self.line_to_list(line)
+                    if data_list:
+                        self.dispatch(data_list)
+        except FileNotFoundError:
+            error_exit(f"Error: The file '{self.path}' was not found.")
+        except PermissionError:
+            error_exit(f"Error: No permission to read '{self.path}'.")
+        except UnicodeDecodeError:
+            error_exit(f"Error: Encoding issue. Use UTF-8 for '{self.path}'.")
+        except Exception as e:
+            error_exit(f"Unexpected error during parsing: {e}")
