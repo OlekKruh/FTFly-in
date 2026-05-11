@@ -23,12 +23,13 @@ def main():
     #         app.run_simulation()
     #     case _:
     #         error_exit("Too many arguments. Usage: python main.py [map_path]")
+    print("Start")
     world_obj = World()
     x = FileParser("/Users/okruh/Documents/Fly-In/maps/hard/02_capacity_hell.txt", world_obj)
     x.pars_map()
     for key, value in world_obj.zones_map.items():
         print(f"🔑 {key}: {value}")
-    print("fin")
+    print("Fin")
 
 if __name__ == "__main__":
     main()

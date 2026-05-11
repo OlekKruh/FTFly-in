@@ -7,11 +7,6 @@ from src.parser.parser import error_exit
 
 @dataclass
 class World:
-    """
-    список дронов
-    список нодов
-    словарь соединений зон
-    """
     drones_quantity: int = 0
     drone_list: List[Drone] = field(default_factory=list)
     zones_map: Dict[str, Zone] = field(default_factory=dict)
@@ -25,11 +20,23 @@ class World:
                 key, value = i.split("=")
                 match key:
                     case "zone":
-                        self.zones_map[name].zone_type = value
+                        if value in ["normal", "blocked",
+                                     "restricted", "priority"]:
+                            self.zones_map[name].zone_type = value
+                        else:
+                            error_exit("Invalid zone type!")
                     case "color":
-                        self.zones_map[name].color = value
+                        if value.strip().isalpha():
+                            self.zones_map[name].color = value
+                        else:
+                            error_exit("Invalid color name!"
+                                       " Must be a single word.")
                     case "max_drones":
-                        self.zones_map[name].max_drones = value
+                        try:
+                            self.zones_map[name].max_drones = int(value)
+                        except ValueError:
+                            error_exit(f"Invalid value for max_drones:"
+                                       f" '{value}'. Must be an integer.")
                     case _:
                         error_exit("Invalid key in meta data!")
 
@@ -37,6 +44,7 @@ class World:
         # TODO
         ...
 
-    def add_relation_to_map(self):
-        # TODO
+    def add_relation_to_map(self, link_arg: str, meta_arg: str):
+        zone1, zone2 = link_arg.split("-")
+        key, value = meta_arg.split("=")
         ...
