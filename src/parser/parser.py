@@ -8,7 +8,8 @@ class FileParser:
         self.path = Path(file_path)
         self.world = world_obj
 
-    def line_to_list(self, raw_line):
+
+    def line_to_list(self, raw_line: str) -> List:
         res = []
         valid_heads = [
             "nb_drones",
@@ -17,76 +18,49 @@ class FileParser:
             "end_hub",
             "connection"
         ]
-        if "#" in raw_line:
+        if ":" not in raw_line or "#" in raw_line:
             return res
-        if ":" not in raw_line:
-            return res
-        head, body = raw_line.split(":", 1)
-        head = head.strip()
-        if head not in valid_heads:
-            error_exit("Invalid line head!\n"
-                       "Line mast start flom one in list "
-                       f"{valid_heads}")
-        res.append(head)
+        try:
+            head, body = raw_line.split(":", 1)
+            head = head.strip()
+            if head not in valid_heads:
+                error_exit("Line_to_list func Error\n"
+                           f"Invalid head '{head.strip()}'.\n"
+                           f"Expected one of {valid_heads}")
+            res.append(head)
 
-        body = body.strip()
-        if "[" in body:
-            name_x_y, rest = body.split("[")
-            res.append(name_x_y.split())
-
-            meta, trash = rest.split("]")
-            if trash:
-                error_exit("Wrong line format in map description")
-            res.append(meta.split())
-        else:
-            res.append(body.split())
-
+            body = body.strip()
+            if "[" in body:
+                name_x_y, rest = body.split("[", 1)
+                meta, trash = rest.split("]", 1)
+                if trash:
+                    error_exit("Line_to_list func Error\n"
+                               "Trailing characters found after metadata "
+                               f"'{trash.strip()}'")
+                res.append(name_x_y.split())
+                res.append(meta.split())
+            else:
+                res.append(body.split())
+        except ValueError as e:
+            error_exit(f"Line_to_list func Error\n"
+                       f"Map format error: {e}")
         return res
 
     def dispatch(self, line_list: List):
-        if line_list[0] == "nb_drones":
-            try:
-                if len(line_list[1]) != 1:
-                    error_exit(f"Error: 'nb_drones' expects 1 value, "
-                               f"got {len(line_list[1])}")
-                self.world.drones_quantity = int(line_list[1][0])
-            except (ValueError, IndexError, TypeError) as e:
-                error_exit(f"Error: {e}")
+        head = line_list[0] if line_list else ""
+        main_data = line_list[1] if len(line_list) > 1 else []
+        meta_data = line_list[2] if len(line_list) > 2 else []
 
-        elif line_list[0] in ["start_hub", "hub", "end_hub"]:
-            try:
-                main_param = line_list[1]
-                meta_data = line_list[2] if len(line_list) > 2 else None
-                if len(main_param) != 3:
-                    error_exit(f"Error: {line_list[0]} expects [name, x, y],"
-                               f" got {main_param}")
-                hub_name, hub_x, hub_y = (
-                    line_list[1][0],
-                    int(line_list[1][1]),
-                    int(line_list[1][2])
-                )
-                self.world.add_zone_to_map(
-                    [hub_name, hub_x, hub_y],
-                    meta_data # выпадаем за список нужно условие
-                )
-            except (ValueError, IndexError) as e:
-                error_exit(f"Error: Invalid main parameters format "
-                           f"or missing values. {e}")
-
-        elif line_list[0] == "connection":
-            try:
-                connection = line_list[1]
-                # выпадаем за список нужно условие
-                meta_data = line_list[2] if len(line_list) > 2 else None
-                if len(connection) != 1:
-                    error_exit("Invalid value. "
-                               "Onli one connection must be in line "
-                               f"got {connection}")
-                self.world.add_relation_to_map(connection[0], meta_data[0])
-            except (ValueError, IndexError) as e:
-                error_exit(f"Error: Invalid connection parameters format "
-                           f"or missing values. {e}")
-
+        match head:
+            case "nb_drones":
+                self.world.set_drone_quantity(main_data)
+            case "start_hub" | "hub" | "end_hub":
+                self.world.add_zone_to_map(head, main_data, meta_data)
+            case "connection":
+                self.world.add_relation_to_map(main_data, meta_data)
+            case _:
+                error_exit("Dispatch func Error.\n"
+                           f"Unknown head '{head}'")
 
     def pars_map(self):
         """
@@ -95,14 +69,18 @@ class FileParser:
         try:
             with self.path.open(encoding="utf-8") as file:
                 for line in file:
-                    data_list = self.line_to_list(line)
+                    data_list: List = self.line_to_list(line)
                     if data_list:
                         self.dispatch(data_list)
         except FileNotFoundError:
-            error_exit(f"Error: The file '{self.path}' was not found.")
+            error_exit(f"Pars_map func Error:\n"
+                       f"The file '{self.path}' was not found.")
         except PermissionError:
-            error_exit(f"Error: No permission to read '{self.path}'.")
+            error_exit(f"Pars_map func Error:\n"
+                       f"No permission to read '{self.path}'.")
         except UnicodeDecodeError:
-            error_exit(f"Error: Encoding issue. Use UTF-8 for '{self.path}'.")
+            error_exit(f"Pars_map func Error:\n"
+                       f"Encoding issue. Use UTF-8 for '{self.path}'.")
         except Exception as e:
-            error_exit(f"Unexpected error during parsing: {e}")
+            error_exit(f"Pars_map func Error:\n"
+                       f"Unexpected error during parsing: {e}")

@@ -40,11 +40,13 @@ class World:
                     case _:
                         error_exit("Invalid key in meta data!")
 
-    def add_drone_to_map(self):
-        # TODO
+    def add_relation_to_map(self, link_arg: str, meta_arg: str):
+        # try:
+        #     zone1, zone2 = link_arg.split("-")
+        # if meta_arg:
+        #     key, value = meta_arg.split("=")
         ...
 
-    def add_relation_to_map(self, link_arg: str, meta_arg: str):
-        zone1, zone2 = link_arg.split("-")
-        key, value = meta_arg.split("=")
+    def add_drone_to_map(self):
+        # TODO
         ...
