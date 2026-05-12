@@ -40,3 +40,32 @@ def dispatch(self, line_list: List):
         except (ValueError, IndexError) as e:
             error_exit(f"Error: Invalid connection parameters format "
                        f"or missing values. {e}")
+
+    def add_zone_to_map(self, main_arg_list: List, meta_arg_list: List):
+        name, zone_x, zone_y = main_arg_list
+        self.zones_map[name] = Zone(name, int(zone_x), int(zone_y))
+
+        if meta_arg_list:
+            for i in meta_arg_list:
+                key, value = i.split("=")
+                match key:
+                    case "zone":
+                        if value in ["normal", "blocked",
+                                     "restricted", "priority"]:
+                            self.zones_map[name].zone_type = value
+                        else:
+                            error_exit("Invalid zone type!")
+                    case "color":
+                        if value.strip().isalpha():
+                            self.zones_map[name].color = value
+                        else:
+                            error_exit("Invalid color name!"
+                                       " Must be a single word.")
+                    case "max_drones":
+                        try:
+                            self.zones_map[name].max_drones = int(value)
+                        except ValueError:
+                            error_exit(f"Invalid value for max_drones:"
+                                       f" '{value}'. Must be an integer.")
+                    case _:
+                        error_exit("Invalid key in meta data!")

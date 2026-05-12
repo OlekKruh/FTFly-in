@@ -24,7 +24,7 @@ class FileParser:
             head, body = raw_line.split(":", 1)
             head = head.strip()
             if head not in valid_heads:
-                error_exit("Line_to_list func Error\n"
+                error_exit("FileParser (line_to_list):\n"
                            f"Invalid head '{head.strip()}'.\n"
                            f"Expected one of {valid_heads}")
             res.append(head)
@@ -34,7 +34,7 @@ class FileParser:
                 name_x_y, rest = body.split("[", 1)
                 meta, trash = rest.split("]", 1)
                 if trash:
-                    error_exit("Line_to_list func Error\n"
+                    error_exit("FileParser (line_to_list):\n"
                                "Trailing characters found after metadata "
                                f"'{trash.strip()}'")
                 res.append(name_x_y.split())
@@ -42,7 +42,7 @@ class FileParser:
             else:
                 res.append(body.split())
         except ValueError as e:
-            error_exit(f"Line_to_list func Error\n"
+            error_exit(f"FileParser (line_to_list):\n"
                        f"Map format error: {e}")
         return res
 
@@ -59,7 +59,7 @@ class FileParser:
             case "connection":
                 self.world.add_relation_to_map(main_data, meta_data)
             case _:
-                error_exit("Dispatch func Error.\n"
+                error_exit("FileParser (dispatch):\n"
                            f"Unknown head '{head}'")
 
     def pars_map(self):
@@ -73,14 +73,14 @@ class FileParser:
                     if data_list:
                         self.dispatch(data_list)
         except FileNotFoundError:
-            error_exit(f"Pars_map func Error:\n"
+            error_exit(f"FileParser (pars_map):\n"
                        f"The file '{self.path}' was not found.")
         except PermissionError:
-            error_exit(f"Pars_map func Error:\n"
+            error_exit(f"FileParser (pars_map):\n"
                        f"No permission to read '{self.path}'.")
         except UnicodeDecodeError:
-            error_exit(f"Pars_map func Error:\n"
+            error_exit(f"FileParser (pars_map):\n"
                        f"Encoding issue. Use UTF-8 for '{self.path}'.")
         except Exception as e:
-            error_exit(f"Pars_map func Error:\n"
+            error_exit(f"FileParser pars_map):\n"
                        f"Unexpected error during parsing: {e}")

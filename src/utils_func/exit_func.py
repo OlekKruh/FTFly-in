@@ -2,7 +2,7 @@ import sys
 
 
 def error_exit(message: str) -> None:
-    print(f"Error Exit: {message}")
+    print(f"Error Exit >>> {message}")
     sys.exit(1)
 
 

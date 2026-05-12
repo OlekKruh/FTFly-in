@@ -8,7 +8,7 @@ class Zone:
     name: str
     zone_x: int
     zone_y: int
-    zone_type: str = "normal"
+    zone: str = "normal"
     color: str = None
     max_drones: int = 1
     current_drones: List[int] = field(default_factory=list)
