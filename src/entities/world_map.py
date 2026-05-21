@@ -14,7 +14,8 @@ class World:
     end_hub: Zone = None
     zones_map: Dict[str, Zone] = field(default_factory=dict)
 
-    def _safe_int(self, value: str, field_name: str) -> int:
+    @staticmethod
+    def _safe_int(value: str, field_name: str):
         try:
             return int(value)
         except ValueError:
@@ -121,3 +122,13 @@ class World:
             error_exit("World Map (add_relation_to_map):\n"
                        "Invalid main_data format Expected 'name-name'\n"
                        f"got {e}")
+
+    def init_drones(self):
+        if not self.start_hub:
+            error_exit("World Map (init_drones):\n"
+                       "No start_hub defined in map!")
+        for drone_id in range(1, self.drones_quantity + 1):
+            drone_name = f"D{drone_id}"
+            new_drone = Drone(drone_id=drone_name)
+            self.drone_list.append(new_drone)
+            self.start_hub.add_dron_to_zone(new_drone)

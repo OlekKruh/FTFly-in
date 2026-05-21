@@ -24,10 +24,11 @@ def main():
     #     case _:
     #         error_exit("Too many arguments. Usage: python main.py [map_path]")
     print("Start")
-    world_obj = World()
-    x = FileParser("/Users/okruh/Documents/Fly-In/maps/hard/02_capacity_hell.txt", world_obj)
+    world = World()
+    x = FileParser("./maps/hard/02_capacity_hell.txt", world)
     x.pars_map()
-    for key, value in world_obj.zones_map.items():
+    world.init_drones()
+    for key, value in world.zones_map.items():
         print(f"{key}: {value}")
     print("Fin")
 
