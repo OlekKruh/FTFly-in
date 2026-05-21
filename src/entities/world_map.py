@@ -109,7 +109,10 @@ class World:
             zone2 = self.zones_map.get(name2)
             if not zone1 or not zone2:
                 error_exit("World Map (add_relation_to_map):\n"
-                           "Invalid zone name. No such zone in world map.")
+                           "Invalid zone name. No such zone in world map.\n"
+                           f"Expected zones with name = {name1} and name = {name2}\n"
+                           f"Zone 1: {zone1}\n"
+                           f"Zone 2: {zone2}\n")
 
             capacity = 1
             if meta_data:
