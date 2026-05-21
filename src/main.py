@@ -28,7 +28,7 @@ def main():
     x = FileParser("/Users/okruh/Documents/Fly-In/maps/hard/02_capacity_hell.txt", world_obj)
     x.pars_map()
     for key, value in world_obj.zones_map.items():
-        print(f"🔑 {key}: {value}")
+        print(f"{key}: {value}")
     print("Fin")
 
 if __name__ == "__main__":
