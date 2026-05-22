@@ -69,24 +69,45 @@
 #                                        f" '{value}'. Must be an integer.")
 #                     case _:
 #                         error_exit("Invalid key in meta data!")
+
+# ==========================================
 # if len(meta_data) != 1:
-            #     error_exit("World Map (add_relation_to_map):\n"
-            #                f"Link Expects meta_data len 1\n"
-            #                f"Example 'key=value', got {meta_data}")
-            # try:
-            #     meta_key, meta_value = meta_data[0].split("=")
-            #     if meta_key != "max_link_capacity":
-            #         error_exit("World Map (add_relation_to_map):\n"
-            #                    "Invalid meta_key Expected "
-            #                    "'max_link_capacity'\n"
-            #                    f"got {meta_key}")
-            #     try:
-            #         capacity = int(meta_value)
-            #     except ValueError as e:
-            #         error_exit("World Map (add_relation_to_map):\n"
-            #                    "Invalid meta_value format Expected 'int'\n"
-            #                    f"got {e}")
-            # except ValueError as e:
-            #     error_exit("World Map (add_relation_to_map):\n"
-            #                "Invalid meta_data format Expected 'key=value'\n"
-            #                f"got {e}")
+#     error_exit("World Map (add_relation_to_map):\n"
+#                f"Link Expects meta_data len 1\n"
+#                f"Example 'key=value', got {meta_data}")
+# try:
+#     meta_key, meta_value = meta_data[0].split("=")
+#     if meta_key != "max_link_capacity":
+#         error_exit("World Map (add_relation_to_map):\n"
+#                    "Invalid meta_key Expected "
+#                    "'max_link_capacity'\n"
+#                    f"got {meta_key}")
+#     try:
+#         capacity = int(meta_value)
+#     except ValueError as e:
+#         error_exit("World Map (add_relation_to_map):\n"
+#                    "Invalid meta_value format Expected 'int'\n"
+#                    f"got {e}")
+# except ValueError as e:
+#     error_exit("World Map (add_relation_to_map):\n"
+#                "Invalid meta_data format Expected 'key=value'\n"
+#                f"got {e}")
+# ==========================================
+# PARSING OF ALL PATHS IN DIR MAPS
+# searcher = MapSearcher('./maps')
+# found_maps = searcher.scan_maps()
+# for key, path in found_maps.items():
+#     print(f"[{key}] - {path}")
+
+# PARSING OF SPECIFIC MAP ON PATH
+# print("Start")
+#
+# world = World()
+# x = FileParser("./maps/hard/02_capacity_hell.txt", world)
+# x.pars_map()
+# world.init_drones()
+#
+# for key, value in world.zones_map.items():
+#     print(f"{key}: {value}")
+#
+# print("Fin")
