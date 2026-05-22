@@ -1,7 +1,7 @@
 # import sys
 # from entities.app import App
 # from typing import Final
-from parser.parser import FileParser
+from parser.map_parser import FileParser
 from entities.world_map import World
 # from utils_func.exit_func import error_exit
 
@@ -24,13 +24,17 @@ def main():
     #     case _:
     #         error_exit("Too many arguments. Usage: python main.py [map_path]")
     print("Start")
+
     world = World()
     x = FileParser("./maps/hard/02_capacity_hell.txt", world)
     x.pars_map()
     world.init_drones()
+
     for key, value in world.zones_map.items():
         print(f"{key}: {value}")
+
     print("Fin")
+
 
 if __name__ == "__main__":
     main()

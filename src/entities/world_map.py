@@ -3,7 +3,7 @@ from typing import Dict, List
 from .zone import Zone
 from .drone import Drone
 from .links import Link
-from src.parser.parser import error_exit
+from src.parser.map_parser import error_exit
 
 
 @dataclass
@@ -110,7 +110,8 @@ class World:
             if not zone1 or not zone2:
                 error_exit("World Map (add_relation_to_map):\n"
                            "Invalid zone name. No such zone in world map.\n"
-                           f"Expected zones with name = {name1} and name = {name2}\n"
+                           f"Expected zones with name = {name1} "
+                           f"and name = {name2}\n"
                            f"Zone 1: {zone1}\n"
                            f"Zone 2: {zone2}\n")
 
