@@ -13,7 +13,7 @@ class MapSearcher:
 
         if "easy" in parts:
             return 1
-        elif "medium" in parts or "normal" in parts:
+        elif "medium" in parts:
             return 2
         elif "hard" in parts:
             return 3

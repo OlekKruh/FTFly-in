@@ -3,7 +3,7 @@ import pygame as pg
 from src.parser.map_searcher import MapSearcher
 from src.entities.world_map import World
 from src.parser.map_parser import FileParser
-from src.visualizer.renderer import MenuRenderer
+from src.entities.menu_renderer import MenuRenderer
 
 
 class App:
@@ -32,7 +32,7 @@ class App:
 
     def open_menu(self):
         searcher = MapSearcher('./maps')
-        found_maps = searcher.scan_maps()  # DICT
+        found_maps = searcher.scan_maps()
         map_names = list(found_maps.keys())
 
         renderer = MenuRenderer(self.screen)
@@ -40,7 +40,8 @@ class App:
         while self.menu_running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    self.safe_quit()
+                    self.menu_running = False
+                    self.show_world()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_DOWN:
                         self.menu_index = ((self.menu_index + 1)
@@ -53,7 +54,7 @@ class App:
                         self.current_map_path = found_maps[selected_name]
                         self.menu_running = False
                         break
-            renderer.menu_render(found_maps, self.menu_index)
+            # renderer.menu_render(found_maps, self.menu_index)
 
             pg.display.flip()
             self.clock.tick(60)
