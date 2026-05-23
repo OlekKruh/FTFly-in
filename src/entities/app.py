@@ -8,7 +8,7 @@ from src.entities.menu_renderer import MenuRenderer
 
 class App:
     SCR_WIDTH = 1280
-    SCR_HEIGHT = 800
+    SCR_HEIGHT = 720
 
     def __init__(self):
         pg.init()
@@ -33,9 +33,11 @@ class App:
     def open_menu(self):
         searcher = MapSearcher('./maps')
         found_maps = searcher.scan_maps()
-        map_names = list(found_maps.keys())
+        # map_names = list(found_maps.keys())
+        map_paths = list(found_maps.values())
 
         renderer = MenuRenderer(self.screen)
+        renderer.build_layout(found_maps)
 
         while self.menu_running:
             for event in pg.event.get():
@@ -45,22 +47,24 @@ class App:
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_DOWN:
                         self.menu_index = ((self.menu_index + 1)
-                                           % len(map_names))
+                                           % len(map_paths))
                     elif event.key == pg.K_UP:
                         self.menu_index = ((self.menu_index - 1)
-                                           % len(map_names))
+                                           % len(map_paths))
                     elif event.key == pg.K_RETURN:
-                        selected_name = map_names[self.menu_index]
-                        self.current_map_path = found_maps[selected_name]
+                        self.current_map_path = map_paths[self.menu_index]
+                        # self.current_map_path = found_maps[selected_name]
                         self.menu_running = False
+                        self.show_world()
                         break
-            # renderer.menu_render(found_maps, self.menu_index)
 
+            renderer.menu_render(self.menu_index)
             pg.display.flip()
             self.clock.tick(60)
         self.safe_quit()
 
     def show_world(self, map_path: str = None):
+
         if map_path:
             self._load_and_pars(map_path)
         else:
