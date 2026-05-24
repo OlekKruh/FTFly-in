@@ -7,12 +7,12 @@ from src.entities.menu_renderer import MenuRenderer
 
 
 class App:
-    SCR_WIDTH = 1280
-    SCR_HEIGHT = 720
-
     def __init__(self):
         pg.init()
-        self.screen = pg.display.set_mode((self.SCR_WIDTH, self.SCR_HEIGHT))
+        monitor_info = pg.display.Info()
+        self.scr_width = int(monitor_info.current_w * 0.8)
+        self.scr_height = int(monitor_info.current_h * 0.8)
+        self.screen = pg.display.set_mode((self.scr_width, self.scr_height))
         self.world = None
         self.current_map_path = None
         self.clock = pg.time.Clock()
@@ -53,7 +53,6 @@ class App:
                                            % len(map_paths))
                     elif event.key == pg.K_RETURN:
                         self.current_map_path = map_paths[self.menu_index]
-                        # self.current_map_path = found_maps[selected_name]
                         self.menu_running = False
                         self.show_world()
                         break

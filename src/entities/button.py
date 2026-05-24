@@ -4,7 +4,7 @@ from .text import TextLabel
 
 class MenuButton:
     def __init__(self, x: int, y: int, text: str):
-        self.width = 200
+        self.width = 300
         self.height = 50
 
         self.rect = pg.Rect(x, y, self.width, self.height)

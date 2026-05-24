@@ -27,21 +27,26 @@ class MenuRenderer:
         ...
         }
         """
-        cord_y = 50
-        cord_x = (self.screen.get_width() // 2) - 100
+        scr_w = self.screen.get_width()
+        scr_h = self.screen.get_height()
+        cord_y = scr_h * 0.00
+        button_width = 300
+        cord_x = (scr_w // 2) - (button_width // 2)
         current_category = ""
 
         for i in found_maps:
             level_name, level_difficulty = self._pars_path(found_maps[i])
             if level_difficulty != current_category:
+                cord_y += scr_h * 0.03  # padding before title text
                 current_category = level_difficulty
-                title = TextLabel(current_category.upper(), 32,
-                                  (cord_x, cord_y), "white", True)
+                title_font_size = int(scr_h * 0.04)
+                title = TextLabel(current_category.upper(), title_font_size,
+                                  (scr_w // 2, cord_y), "white", True)
                 self.menu_titles.append(title)
-                cord_y += 20
+                cord_y += scr_h * 0.02  # padding after title text
             buton = MenuButton(cord_x, cord_y, level_name)
             self.menu_buttons.append(buton)
-            cord_y += 70
+            cord_y += scr_h * 0.08
 
     def menu_render(self, menu_index: int):
         self.screen.fill((30, 30, 30))
