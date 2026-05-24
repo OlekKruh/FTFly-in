@@ -21,3 +21,13 @@ class GfxWorldRenderer:
                 gfx_link = GfxLink(source_node, target_node, link)
                 self.gfx_links.append(gfx_link)
 
+    def render_frame(self):
+        self.screen.fill((20, 20, 30))
+
+        # Сначала рисуем все связи (нижний слой)
+        for link in self.gfx_links:
+            link.draw(self.screen, self.camera)
+
+        # Затем рисуем зоны (верхний слой, перекроет концы линий)
+        for zone in self.gfx_zones:
+            zone.draw(self.screen, self.camera)
