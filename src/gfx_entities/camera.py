@@ -27,10 +27,10 @@ class Camera:
 
         # 1. Находим крайние точки мира (Bounding Box)
         # Предполагается, что у твоих зон есть атрибуты .x и .y
-        min_x = min(zone.x for zone in zones_map.values())
-        max_x = max(zone.x for zone in zones_map.values())
-        min_y = min(zone.y for zone in zones_map.values())
-        max_y = max(zone.y for zone in zones_map.values())
+        min_x = min(zone.zone_x for zone in zones_map.values())
+        max_x = max(zone.zone_x for zone in zones_map.values())
+        min_y = min(zone.zone_y for zone in zones_map.values())
+        max_y = max(zone.zone_y for zone in zones_map.values())
 
         # 2. Вычисляем физический размер карты
         world_w = max_x - min_x
@@ -43,8 +43,8 @@ class Camera:
             world_h = 1
 
         # 3. Считаем доступное место на экране с учетом отступов
-        available_w = self.screen_width - self.padding
-        available_h = self.screen_height - self.padding
+        available_w = self.screen_width - (self.padding * 2)
+        available_h = self.screen_height - (self.padding * 2)
 
         # 4. Вычисляем масштаб
         scale_x = available_w / world_w

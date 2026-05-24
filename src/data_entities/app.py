@@ -1,9 +1,12 @@
 import sys
 import pygame as pg
+
+from src.gfx_entities.gfx_world_renderer import GfxWorldRenderer
 from src.parser.map_searcher import MapSearcher
 from src.data_entities.world_map import World
 from src.parser.map_parser import FileParser
 from src.gfx_entities.menu_renderer import MenuRenderer
+from src.gfx_entities.camera import Camera
 
 
 class App:
@@ -44,7 +47,9 @@ class App:
                     self.menu_running = False
                     self.show_world()
                 elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_DOWN:
+                    if event.key == pg.K_ESCAPE:
+                        self.safe_quit()
+                    elif event.key == pg.K_DOWN:
                         self.menu_index = ((self.menu_index + 1)
                                            % len(map_paths))
                     elif event.key == pg.K_UP:
@@ -68,6 +73,10 @@ class App:
         else:
             self._load_and_pars(self.current_map_path)
 
+
         # TEMP SHOWCASE
-        for key, value in self.world.zones_map.items():
-            print(f"{key}: {value}")
+        # camera = Camera(self.scr_width, self.scr_height)
+        # temp = GfxWorldRenderer(self.screen, camera)
+        # temp.build_scene(self.world)
+        # for key, value in self.world.zones_map.items():
+        #     print(f"{key}: {value}")

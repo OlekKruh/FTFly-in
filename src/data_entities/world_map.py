@@ -120,8 +120,8 @@ class World:
                 meta_dict = self._parse_hub_meta(main_data[0], meta_data)
                 capacity = meta_dict.get("max_link_capacity", 1)
 
-            zone1.links.append(Link(name2, capacity))
-            zone2.links.append(Link(name1, capacity))
+            zone1.links.append(Link(name1, name2, capacity))
+            zone2.links.append(Link(name2, name1, capacity))
         except ValueError as e:
             error_exit("World Map (add_relation_to_map):\n"
                        "Invalid main_data format Expected 'name-name'\n"
