@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, List
 from .zone import Zone
-from .menu_drone import Drone
+from .drone import Drone
 from .links import Link
 from src.parser.map_parser import error_exit
 

@@ -1,9 +1,9 @@
 import sys
 import pygame as pg
 from src.parser.map_searcher import MapSearcher
-from src.entities.world_map import World
+from src.data_entities.world_map import World
 from src.parser.map_parser import FileParser
-from src.entities.menu_renderer import MenuRenderer
+from src.gfx_entities.menu_renderer import MenuRenderer
 
 
 class App:
@@ -33,7 +33,6 @@ class App:
     def open_menu(self):
         searcher = MapSearcher('./maps')
         found_maps = searcher.scan_maps()
-        # map_names = list(found_maps.keys())
         map_paths = list(found_maps.values())
 
         renderer = MenuRenderer(self.screen)

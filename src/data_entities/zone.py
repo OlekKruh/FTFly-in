@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 from .links import Link
-from .menu_drone import Drone
+from .drone import Drone
 
 
 @dataclass

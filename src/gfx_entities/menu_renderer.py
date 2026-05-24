@@ -1,6 +1,6 @@
 from pathlib import Path
-from .button import MenuButton
-from .text import TextLabel
+from src.gfx_entities.gfx_button import MenuButton
+from src.gfx_entities.gfx_text import TextLabel
 
 
 class MenuRenderer:
@@ -46,7 +46,7 @@ class MenuRenderer:
                 cord_y += scr_h * 0.02  # padding after title text
             buton = MenuButton(cord_x, cord_y, level_name)
             self.menu_buttons.append(buton)
-            cord_y += scr_h * 0.08
+            cord_y += scr_h * 0.08  # padding after button text
 
     def menu_render(self, menu_index: int):
         self.screen.fill((30, 30, 30))

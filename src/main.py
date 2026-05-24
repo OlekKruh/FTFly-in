@@ -1,5 +1,5 @@
 import sys
-from entities.app import App
+from data_entities.app import App
 from typing import Final
 from utils_func.exit_func import error_exit
 

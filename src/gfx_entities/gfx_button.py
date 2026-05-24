@@ -1,5 +1,5 @@
 import pygame as pg
-from .text import TextLabel
+from src.gfx_entities.gfx_text import TextLabel
 
 
 class MenuButton:
