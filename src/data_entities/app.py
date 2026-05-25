@@ -73,52 +73,27 @@ class App:
         else:
             self._load_and_pars(self.current_map_path)
 
-        # 1. Создаем графический менеджер мира и собираем сцену
         world_renderer = GfxWorldRenderer(self.screen, self.camera)
         world_renderer.build_scene(self.world)
 
-        # Настройки скорости камеры
-        pan_speed = 15  # Пикселей за кадр
-        zoom_speed = 1.03  # Коэффициент зума за кадр
+        pan_speed = 20
 
-        # 2. Запускаем главный цикл симуляции
         world_running = True
         while world_running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.safe_quit()
                 elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:  # Выход по ESC
+                    if event.key == pg.K_ESCAPE:
                         self.safe_quit()
 
-            # --- УПРАВЛЕНИЕ КАМЕРОЙ (КЛАВИАТУРА) ---
-            # Получаем состояние всех кнопок на текущий кадр
             keys = pg.key.get_pressed()
-            # Сдвиг камеры (мир едет в противоположную сторону)
             if keys[pg.K_LEFT]:
-                self.camera.offset_x += pan_speed
+                self.camera.shift_x += pan_speed
             if keys[pg.K_RIGHT]:
-                self.camera.offset_x -= pan_speed
-            if keys[pg.K_UP]:
-                self.camera.offset_y += pan_speed
-            if keys[pg.K_DOWN]:
-                self.camera.offset_y -= pan_speed
+                self.camera.shift_x -= pan_speed
+            self.camera.apply_horizontal_bounds()
 
-            # Масштабирование (Зум)
-            # K_EQUALS проверяет клавишу "=" (где обычно находится "+")
-            if keys[pg.K_EQUALS] or keys[pg.K_KP_PLUS]:
-                self.camera.scale *= zoom_speed
-            if keys[pg.K_MINUS] or keys[pg.K_KP_MINUS]:
-                self.camera.scale /= zoom_speed
-
-            # --- ОГРАНИЧЕНИЯ КАМЕРЫ (КЛАМПИНГ) ---
-            # 1. Ограничение зума оставляем жестким (чтобы не перевернуть карту наизнанку)
-            self.camera.scale = max(100.0, min(self.camera.scale, 200.0))
-            # 2. Умное ограничение сдвига по крайним точкам
-            self.camera.apply_bounds()
-
-            # 3. Отрисовка кадра и обновление экрана
             world_renderer.render_frame()
-
             pg.display.flip()
             self.clock.tick(60)

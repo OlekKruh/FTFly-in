@@ -9,7 +9,7 @@ class GfxLink:
         self.target_zone = target_zone
         self.link_data = link_data
         self.link_color = "white"
-        self.link_thickness = self.link_data.max_capacity * 2
+        self.link_thickness = self.link_data.max_capacity * 5
 
     def draw(self, screen, camera):
         start_pos = camera.world_to_screen(self.source_zone.zone_x,
