@@ -3,6 +3,7 @@
 .flake8
 .DS_Store
 src/.DS_Store
+.scrabs.py
 
 # Derectoris
 maps/
