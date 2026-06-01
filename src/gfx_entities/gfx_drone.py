@@ -11,9 +11,10 @@ class GfxDrone:
         self.target_x: float = 0.0
         self.target_y: float = 0.0
 
-        self.drone_img = (pg.image.
-                          load("src/gfx_entities/assets/drone.png").
-                          convert_alpha())
+        original_img = (pg.image.
+                        load("src/gfx_entities/assets/drone.png").
+                        convert_alpha())
+        self.drone_img = pg.transform.smoothscale(original_img, (30, 30))
 
         # faster <- 60(1sec), 30(0.5sec), 15(0.25sec), -> slower
         self.drone_acceleration: int = 30
@@ -40,5 +41,7 @@ class GfxDrone:
             self.current_y = self.target_y
             self.drone_speed_y = 0
 
-    def draw(self):
-        ...
+    def draw(self, screen, camera):
+        position = camera.world_to_screen(self.current_x, self.current_y)
+        drone_rect = self.drone_img.get_rect(center=position)
+        screen.blit(self.drone_img, drone_rect)

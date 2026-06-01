@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 
+# from src.gfx_entities.gfx_drone import GfxDrone
 from src.gfx_entities.gfx_world_renderer import GfxWorldRenderer
 from src.parser.map_searcher import MapSearcher
 from src.data_entities.world_map import World
@@ -75,6 +76,17 @@ class App:
 
         world_renderer = GfxWorldRenderer(self.screen, self.camera)
         world_renderer.build_scene(self.world)
+
+        # === Test ===
+        # start_zone = self.world.zones_map["start"]
+        # target_zone = self.world.zones_map["waypoint1"]
+        #
+        # test_drone = GfxDrone(drone_id="D_001", zone=start_zone)
+        # test_drone.set_target(target_zone)
+        # test_drone.update_speed()
+        #
+        # world_renderer.add_drone(test_drone)
+        # ============================
 
         pan_speed = 20
 

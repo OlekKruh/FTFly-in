@@ -9,6 +9,10 @@ class GfxWorldRenderer:
         self.camera = camera
         self.gfx_zones = []
         self.gfx_links = []
+        self.gfx_drones = []
+
+    def add_drone(self, drone):
+        self.gfx_drones.append(drone)
 
     def build_scene(self, world_data: World):
         self.camera.auto_fit(world_data.zones_map)
@@ -24,10 +28,12 @@ class GfxWorldRenderer:
     def render_frame(self):
         self.screen.fill((20, 20, 30))
 
-        # Сначала рисуем все связи (нижний слой)
         for link in self.gfx_links:
             link.draw(self.screen, self.camera)
 
-        # Затем рисуем зоны (верхний слой, перекроет концы линий)
         for zone in self.gfx_zones:
             zone.draw(self.screen, self.camera)
+
+        for drone in self.gfx_drones:
+            drone.update_cord()
+            drone.draw(self.screen, self.camera)
