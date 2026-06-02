@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 
+from src.algorithm.pathfinder import Navigator
 # from src.gfx_entities.gfx_drone import GfxDrone
 from src.gfx_entities.gfx_world_renderer import GfxWorldRenderer
 from src.parser.map_searcher import MapSearcher
@@ -76,6 +77,12 @@ class App:
 
         world_renderer = GfxWorldRenderer(self.screen, self.camera)
         world_renderer.build_scene(self.world)
+
+        navigator = Navigator(start_hub=self.world.start_hub,
+                              end_hub=self.world.end_hub,
+                              zones=self.world.zones_map)
+        print(navigator.broad_search())
+
 
         # === Test ===
         # start_zone = self.world.zones_map["start"]
