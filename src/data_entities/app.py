@@ -2,7 +2,8 @@ import sys
 import pygame as pg
 
 from src.algorithm.pathfinder import Navigator
-# from src.gfx_entities.gfx_drone import GfxDrone
+from src.algorithm.simulator import Simulator
+from src.gfx_entities.gfx_drone import GfxDrone
 from src.gfx_entities.gfx_world_renderer import GfxWorldRenderer
 from src.parser.map_searcher import MapSearcher
 from src.data_entities.world_map import World
@@ -60,9 +61,7 @@ class App:
                                            % len(map_paths))
                     elif event.key == pg.K_RETURN:
                         self.current_map_path = map_paths[self.menu_index]
-                        self.menu_running = False
                         self.show_world()
-                        break
 
             renderer.menu_render(self.menu_index)
             pg.display.flip()
@@ -81,30 +80,44 @@ class App:
         navigator = Navigator(start_hub=self.world.start_hub,
                               end_hub=self.world.end_hub,
                               zones=self.world.zones_map)
-        print(navigator.broad_search())
+        navigator.build_heatmap()
 
+        simulator = Simulator(world=self.world, navigator=navigator)
 
-        # === Test ===
-        # start_zone = self.world.zones_map["start"]
-        # target_zone = self.world.zones_map["waypoint1"]
-        #
-        # test_drone = GfxDrone(drone_id="D_001", zone=start_zone)
-        # test_drone.set_target(target_zone)
-        # test_drone.update_speed()
-        #
-        # world_renderer.add_drone(test_drone)
-        # ============================
+        # === 1. СОЗДАЕМ ГРАФИЧЕСКИХ ДРОНОВ ===
+        gfx_drones_map = {}
+        for logical_drone in self.world.drone_list:
+            gfx_drone = GfxDrone(drone_id=logical_drone.drone_id,
+                                 zone=logical_drone.current_zone)
+            gfx_drones_map[logical_drone.drone_id] = gfx_drone
+            world_renderer.add_drone(gfx_drone)
 
         pan_speed = 20
-
         world_running = True
+
         while world_running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.safe_quit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        self.safe_quit()
+                        world_running = False
+
+                    # === 2. ОБРАБОТКА ХОДА (ПРОБЕЛ) ===
+                    elif event.key == pg.K_SPACE:
+                        simulator.run_step()
+
+                        for logical_drone in self.world.drone_list:
+                            gfx_drone = gfx_drones_map[logical_drone.drone_id]
+
+                            target_x = logical_drone.current_zone.zone_x
+                            target_y = logical_drone.current_zone.zone_y
+
+                            if (gfx_drone.target_x != target_x
+                                    or gfx_drone.target_y != target_y):
+                                gfx_drone.set_target(
+                                    logical_drone.current_zone)
+                                gfx_drone.update_speed()
 
             keys = pg.key.get_pressed()
             if keys[pg.K_LEFT]:
@@ -112,6 +125,10 @@ class App:
             if keys[pg.K_RIGHT]:
                 self.camera.shift_x -= pan_speed
             self.camera.apply_horizontal_bounds()
+
+            # === 3. АНИМАЦИЯ ===
+            for gfx_drone in gfx_drones_map.values():
+                gfx_drone.update_cord()
 
             world_renderer.render_frame()
             pg.display.flip()

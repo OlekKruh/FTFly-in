@@ -1,5 +1,4 @@
 from src.data_entities.zone import Zone
-from src.utils_func.exit_func import error_exit
 
 
 class Navigator:
@@ -7,42 +6,37 @@ class Navigator:
                  zones: dict[str, Zone]):
         self.queue = []
         self.visited = set()
-        self.came_from = {}
+        # self.came_from = {}
         self.start_hub = start_hub
         self.end_hub = end_hub
         self.zones = zones
+        self.distances = {}
 
-    def _build_path(self) -> list[str]:
-        path = []
-        current = self.end_hub.name
+    def build_heatmap(self):
+        self.distances = {name: float('inf') for name in self.zones}
+        self.distances[self.end_hub.name] = 0
 
-        while current is not None:
-            path.append(current)
-            current = self.came_from[current]
-
-        path.reverse()
-        return path
-
-    def broad_search(self) -> list[str]:
-        self.queue.append(self.start_hub)
-        self.visited.add(self.start_hub.name)
-        self.came_from[self.start_hub.name] = None
+        self.queue.append(self.end_hub)
 
         while self.queue:
             current_hub = self.queue.pop(0)
 
-            if current_hub == self.end_hub:
-                return self._build_path()
-
             for link in current_hub.links:
-                neighbor_name = link.target
+                neighbor_name = link.target if link.source == current_hub.name\
+                    else link.source
+                neighbor_hub = self.zones[neighbor_name]
 
-                if neighbor_name not in self.visited:
-                    self.visited.add(neighbor_name)
-                    self.came_from[neighbor_name] = current_hub.name
+                if neighbor_hub.zone == "blocked":
+                    continue
 
-                    neighbor_hub = self.zones[neighbor_name]
+                step_cost = 1
+                if current_hub.zone == "restricted":
+                    step_cost = 2
+                if (len(current_hub.current_drones) >= current_hub.max_drones
+                        and current_hub.name != "end_hub"):
+                    step_cost += len(current_hub.current_drones)
+                new_distance = self.distances[current_hub.name] + step_cost
+
+                if new_distance < self.distances[neighbor_name]:
+                    self.distances[neighbor_name] = new_distance
                     self.queue.append(neighbor_hub)
-        return []
-
-

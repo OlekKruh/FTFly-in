@@ -229,3 +229,93 @@
 #                 self.offset_y += (self.screen_height - margin_y) - screen_max_y
 #             elif screen_min_y > margin_y:
 #                 self.offset_y -= screen_min_y - margin_y
+
+# def _build_path(self) -> list[str]:
+#     path = []
+#     current = self.end_hub.name
+#
+#     while current is not None:
+#         path.append(current)
+#         current = self.came_from[current]
+#
+#     path.reverse()
+#     return path
+
+
+# def broad_search(self) -> list[str]:
+#     self.queue.append(self.start_hub)
+#     self.visited.add(self.start_hub.name)
+#     self.came_from[self.start_hub.name] = None
+#
+#     while self.queue:
+#         current_hub = self.queue.pop(0)
+#
+#         if current_hub == self.end_hub:
+#             return self._build_path()
+#
+#         for link in current_hub.links:
+#             neighbor_name = link.target
+#
+#             if neighbor_name not in self.visited:
+#                 self.visited.add(neighbor_name)
+#                 self.came_from[neighbor_name] = current_hub.name
+#
+#                 neighbor_hub = self.zones[neighbor_name]
+#                 self.queue.append(neighbor_hub)
+#     return []
+
+# def show_world(self, map_path: str = None):
+#     if map_path:
+#         self._load_and_pars(map_path)
+#     else:
+#         self._load_and_pars(self.current_map_path)
+#
+#     world_renderer = GfxWorldRenderer(self.screen, self.camera)
+#     world_renderer.build_scene(self.world)
+#
+#     # === Test ===
+#     navigator = Navigator(start_hub=self.world.start_hub,
+#                           end_hub=self.world.end_hub,
+#                           zones=self.world.zones_map)
+#     navigator.build_heatmap()
+#
+#     # Создаем симулятор
+#     simulator = Simulator(world=self.world, navigator=navigator)
+#
+#     # Временный тест: прокрутим 10 ходов без графики
+#     for _ in range(10):
+#         simulator.run_step()
+#     # ============================
+#
+#     # === Test ===
+#     # start_zone = self.world.zones_map["start"]
+#     # target_zone = self.world.zones_map["waypoint1"]
+#     #
+#     # test_drone = GfxDrone(drone_id="D_001", zone=start_zone)
+#     # test_drone.set_target(target_zone)
+#     # test_drone.update_speed()
+#     #
+#     # world_renderer.add_drone(test_drone)
+#     # ============================
+#
+#     pan_speed = 20
+#
+#     world_running = True
+#     while world_running:
+#         for event in pg.event.get():
+#             if event.type == pg.QUIT:
+#                 self.safe_quit()
+#             elif event.type == pg.KEYDOWN:
+#                 if event.key == pg.K_ESCAPE:
+#                     self.safe_quit()
+#
+#         keys = pg.key.get_pressed()
+#         if keys[pg.K_LEFT]:
+#             self.camera.shift_x += pan_speed
+#         if keys[pg.K_RIGHT]:
+#             self.camera.shift_x -= pan_speed
+#         self.camera.apply_horizontal_bounds()
+#
+#         world_renderer.render_frame()
+#         pg.display.flip()
+#         self.clock.tick(60)
