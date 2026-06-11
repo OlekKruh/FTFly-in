@@ -81,6 +81,7 @@ class App:
                               end_hub=self.world.end_hub,
                               zones=self.world.zones_map)
         navigator.build_heatmap()
+        world_renderer.heatmap = navigator.distances
 
         simulator = Simulator(world=self.world, navigator=navigator)
 

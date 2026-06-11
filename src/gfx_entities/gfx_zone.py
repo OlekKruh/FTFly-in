@@ -14,7 +14,7 @@ class GfxZone:
                   f"Setting color 'magenta'")
             self.color = pg.Color("magenta")
 
-    def draw(self, screen, camera):
+    def draw(self, screen, camera, heatmap=None):
         center_pos = camera.world_to_screen(self.zone_data.zone_x,
                                             self.zone_data.zone_y)
 
@@ -50,3 +50,21 @@ class GfxZone:
             centered=True
         )
         status_label.draw(screen)
+
+        # 5. Heatmap value
+        if heatmap is not None:
+            dist = heatmap.get(self.zone_data.name, float('inf'))
+            if dist == float('inf'):
+                dist_str = "INF"
+            else:
+                dist_str = f"{dist:.1f}"
+
+            heat_cord = (center_pos[0], center_pos[1] + current_radius + 35)
+            heat_label = TextLabel(
+                text=dist_str,
+                size=16,
+                cord=heat_cord,
+                color="orange",
+                centered=True
+            )
+            heat_label.draw(screen)

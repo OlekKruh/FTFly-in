@@ -48,3 +48,5 @@ class Zone:
     def clear_reservations(self):
         self.incoming_count = 0
         self.outgoing_count = 0
+        for link in self.links:
+            link.current_load = 0

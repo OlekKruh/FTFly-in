@@ -133,6 +133,6 @@ class World:
                        "No start_hub defined in map!")
         for drone_id in range(1, self.drones_quantity + 1):
             drone_name = f"D{drone_id}"
-            new_drone = Drone(drone_name, self.start_hub)
+            new_drone = Drone(drone_name, self.start_hub, None)
             self.drone_list.append(new_drone)
             self.start_hub.add_dron_to_zone(new_drone)

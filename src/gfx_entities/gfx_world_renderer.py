@@ -11,6 +11,7 @@ class GfxWorldRenderer:
         self.gfx_links = []
         self.gfx_drones = []
 
+
     def add_drone(self, drone):
         self.gfx_drones.append(drone)
 
@@ -32,7 +33,8 @@ class GfxWorldRenderer:
             link.draw(self.screen, self.camera)
 
         for zone in self.gfx_zones:
-            zone.draw(self.screen, self.camera)
+            current_heatmap = getattr(self, 'heatmap', None)
+            zone.draw(self.screen, self.camera, current_heatmap)
 
         for drone in self.gfx_drones:
             drone.update_cord()
