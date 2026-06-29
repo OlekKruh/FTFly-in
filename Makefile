@@ -4,10 +4,10 @@ install:
 	uv pip install -r requirements.txt
 
 run:
-	python3 src/main.py
+	python3 -m src.main
 
 debug:
-	python3 -m pdb src/main.py
+	python3 -m pdb src.main
 
 lint:
 	flake8 src/

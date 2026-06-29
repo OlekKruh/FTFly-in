@@ -38,8 +38,8 @@ class Camera:
 
         self.padding = 100
 
-    def world_to_screen(self, world_x: int,
-                        world_y: int) -> tuple[int, int]:
+    def world_to_screen(self, world_x: float,
+                        world_y: float) -> tuple[int, int]:
         """
         Translates logical map coordinates into physical screen pixels.
         """

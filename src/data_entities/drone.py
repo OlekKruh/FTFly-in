@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-
-from src.data_entities.zone import Zone
+from typing import Any
 
 
 @dataclass
@@ -21,5 +20,5 @@ class Drone:
          previous turn.
     """
     drone_id: str
-    current_zone: Zone | None = None
-    previous_zone: Zone | None = None
+    current_zone: Any = None
+    previous_zone: Any = None

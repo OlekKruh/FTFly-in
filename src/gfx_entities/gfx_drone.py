@@ -81,7 +81,7 @@ class GfxDrone:
         Translates world coordinates to screen space and blits
             the drone sprite.
         """
-        position = camera.world_to_screen(int(self.current_x),
-                                          int(self.current_y))
+        position = camera.world_to_screen(self.current_x,
+                                          self.current_y)
         drone_rect = self.drone_img.get_rect(center=position)
         screen.blit(self.drone_img, drone_rect)
