@@ -1,9 +1,21 @@
+from typing import Any
+
 import pygame as pg
+
+from .camera import Camera
 from .gfx_text import TextLabel
+from ..data_entities.zone import Zone
 
 
 class GfxZone:
-    def __init__(self, zone_data):
+    """
+    Represents the graphical visualization of a hub (zone) on the map.
+
+    Handles rendering the circular base of the zone, fallback coloring,
+    and overlays informative text labels such as the zone's name, its
+    current drone capacity, and the pathfinding heatmap value.
+    """
+    def __init__(self, zone_data: Zone):
         self.zone_data = zone_data
         self.base_radius = 20
         try:
@@ -14,7 +26,18 @@ class GfxZone:
                   f"Setting color 'magenta'")
             self.color = pg.Color("magenta")
 
-    def draw(self, screen, camera, heatmap=None):
+    def draw(self, screen: pg.Screen, camera: Camera,
+             heatmap: dict[Any, Any] | Any = None) -> None:
+        """
+        Renders the zone circle and its associated informational text labels.
+
+        Args:
+            screen (pygame.Surface): The Pygame display surface.
+            camera (Camera): The viewport controller for coordinate
+                translation.
+            heatmap (dict, optional): A dictionary mapping zone names to their
+                current pathfinding cost. Used to display distance overlays.
+        """
         center_pos = camera.world_to_screen(self.zone_data.zone_x,
                                             self.zone_data.zone_y)
 

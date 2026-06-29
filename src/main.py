@@ -1,15 +1,20 @@
 import sys
-from data_entities.app import App
 from typing import Final
-from utils_func.exit_func import error_exit
+from src.data_entities.app import App
+from src.utils_func.exit_func import error_exit
 
 
-def main():
-    """
-    на вход идут вырианты
-    1) src/main.py - запускаем менюху
-    2) src/main.py maps/easy/map1.txt - запускаем конкретную карту
-    3) больше двух аргументов выдаем ошибку аргументов
+def main() -> None:
+    """The main entry point of the application.
+
+    Parses command-line arguments (sys.argv) and determines the simulator's
+    launch mode:
+    - No arguments: Opens the main map selection menu.
+    - One argument (path): Launches the simulation for the specified map.
+    - More than one argument: Terminates the program with an error.
+
+    Raises:
+        SystemExit: If too many arguments are provided (called via error_exit).
     """
     app: Final = App()
 
@@ -21,7 +26,8 @@ def main():
             app.show_world(path)
         case _:
             error_exit("Too many arguments.\n"
-                       "Example: python3 main.py ./maps/medium/02_circular_loop.txt")
+                       "Example: python3 main.py"
+                       " ./maps/medium/02_circular_loop.txt")
 
 
 if __name__ == "__main__":

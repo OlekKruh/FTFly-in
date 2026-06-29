@@ -1,11 +1,50 @@
+from src.algorithm.pathfinder import Navigator
+from src.data_entities.world_map import World
+
+
 class Simulator:
-    def __init__(self, world, navigator):
+    """
+    Orchestrates the turn-based execution of the drone routing simulation.
+
+    Connects the World state and the Navigator's pathfinding logic to
+    move drones step-by-step towards their destination. It manages the
+    turn counter and checks for the overall simulation completion state.
+
+    Attributes:
+        world (World): The simulation environment containing zones,
+            links, and drones.
+        navigator (Navigator): The pathfinding engine used to generate
+            distance heatmaps.
+        turn (int): The current turn number of the simulation.
+        finished (bool): Flag indicating whether all drones have successfully
+            reached the end_hub.
+    """
+    def __init__(self, world: World, navigator: Navigator):
         self.world = world
         self.navigator = navigator
         self.turn = 0
         self.finished = False
 
-    def run_step(self):
+    def run_step(self) -> None:
+        """
+        Executes a single, complete turn of the simulation.
+
+        The execution follows a strict pipeline to ensure
+            collision-free movement:
+        1. Heatmap Generation: Updates pathfinding costs based
+            on current traffic.
+        2. Status Check: Identifies active drones and triggers
+            completion if empty.
+        3. Queue Sorting: Prioritizes drones closest to the destination
+            to prevent traffic jams (head-of-line blocking).
+        4. Planning Phase: Iterates through sorted drones to find the optimal
+            valid move temporarily reserving space in target zones and on links
+        5. Execution Phase: Physically moves the drones based on the
+            approved plans.
+        6. Cleanup Phase: Resets all temporary turn-based reservations.
+
+        Outputs the movement log for the current turn to the console.
+        """
         self.navigator.build_heatmap()
         if self.finished:
             return
@@ -19,13 +58,16 @@ class Simulator:
             return
 
         active_drones.sort(key=lambda d: self.navigator.distances.get(
-            d.current_zone.name, float('inf')))
+            d.current_zone.name
+            if d.current_zone is not None else "", float('inf')))
 
         moves_to_execute = []
         moved_this_turn = []
 
         for drone in active_drones:
             current_zone = drone.current_zone
+            if current_zone is None:
+                continue
             best_neighbor = None
             best_link = None
 
@@ -55,7 +97,7 @@ class Simulator:
                             best_neighbor = neighbor
                             best_link = link
 
-            if best_neighbor:
+            if best_neighbor and best_link:
                 best_neighbor.book_arrival()
                 best_link.current_load += 1
                 current_zone.book_departure()

@@ -1,14 +1,42 @@
 from pathlib import Path
 from typing import Dict
-from src.parser.map_parser import error_exit
+
+from src.utils_func.exit_func import error_exit
 
 
 class MapSearcher:
+    """
+    Scans and catalogues available map files from a specified directory.
+
+    Used to dynamically generate the map selection menu. It searches for
+    .txt files within the base directory and its subdirectories, assigning
+    a sorting priority based on difficulty levels found in the folder names.
+
+    Attributes:
+        base_dir (Path): The root directory to search for map files.
+            Defaults to './maps'.
+    """
     def __init__(self, base_dir: str = "./maps"):
         self.base_dir = Path(base_dir)
 
     @staticmethod
     def get_priority(path: Path) -> int:
+        """
+        Determines the sorting priority of a map file based on its
+            directory path.
+
+        Evaluates the path components to identify difficulty keywords ('easy',
+        'medium', 'hard') and assigns a corresponding integer weight. Lower
+        numbers indicate higher priority (appear first in the menu).
+
+        Args:
+            path (Path): The pathlib.Path object representing the
+                map's file path.
+
+        Returns:
+            int: The priority level (1 for easy, 2 for medium, 3 for hard,
+                4 for anything else).
+        """
         parts = [p.lower() for p in path.parts]
 
         if "easy" in parts:
@@ -22,8 +50,21 @@ class MapSearcher:
 
     def scan_maps(self) -> Dict[str, str]:
         """
-        Search all *.txt map files in dirs & sub dirs
-        Return Dict shape {'1': 'maps/easy/map1.txt ...'}
+        Recursively searches for map files and builds a numbered
+            menu dictionary.
+
+        Scans the base directory for all '.txt' files, sorts them primarily by
+        their assigned difficulty priority and secondarily by file name, and
+        maps them to string-based numerical indices (e.g., '1', '2', '3').
+
+        Returns:
+            Dict[str, str]: A dictionary where keys are stringified
+                numeric indices and values are the string paths to
+                the corresponding map files.
+
+        Raises:
+            SystemExit: If the base directory does not exist or
+                is not a folder.
         """
         map_dict = {}
         if not self.base_dir.exists() or not self.base_dir.is_dir():

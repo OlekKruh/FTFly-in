@@ -13,31 +13,69 @@ from src.gfx_entities.camera import Camera
 
 
 class App:
-    def __init__(self):
+    """
+    Main application controller managing the Pygame lifecycle
+        and simulation states.
+
+    Orchestrates the display initialization, handles the transition between
+    the main menu and the active simulation world, and processes all user
+    inputs (keyboard events) for camera panning and turn execution.
+
+    Attributes:
+        scr_width (int): Calculated screen width (80% of monitor resolution).
+        scr_height (int): Calculated screen height (80% of monitor resolution).
+        screen (pygame.Surface): The main Pygame display surface.
+        camera (Camera): The viewport controller for rendering offsets.
+        world (World | None): The simulation environment data structure.
+        current_map_path (str | None): The file path of the currently
+            selected map.
+        clock (pygame.time.Clock): Frame rate controller.
+        menu_running (bool): Flag indicating if the main menu loop is active.
+        menu_index (int): The currently highlighted index in the map
+            selection menu.
+    """
+    def __init__(self) -> None:
         pg.init()
         monitor_info = pg.display.Info()
         self.scr_width = int(monitor_info.current_w * 0.8)
         self.scr_height = int(monitor_info.current_h * 0.8)
         self.screen = pg.display.set_mode((self.scr_width, self.scr_height))
         self.camera = Camera(self.scr_width, self.scr_height)
-        self.world = None
-        self.current_map_path = None
+        self.world: World | None = None
+        self.current_map_path: str | None = None
         self.clock = pg.time.Clock()
         self.menu_running = True
         self.menu_index = 0
 
-    def _load_and_pars(self, file_path: str):
+    def _load_and_pars(self, file_path: str) -> None:
+        """
+        Internal helper to initialize a new World and parse the selected
+            map file.
+
+        Args:
+            file_path (str): The string path to the map configuration file.
+        """
         self.world = World()
         parser = FileParser(file_path, self.world)
         parser.pars_map()
         self.world.init_drones()
 
-    def safe_quit(self):
+    def safe_quit(self) -> None:
+        """
+        Safely terminates the Pygame engine and exits the system process.
+        """
         self.menu_running = False
         pg.quit()
         sys.exit()
 
-    def open_menu(self):
+    def open_menu(self) -> None:
+        """
+        Executes the interactive graphical main menu loop.
+
+        Scans the './maps' directory for available levels and handles keyboard
+        navigation (UP/DOWN to select, ENTER to confirm, ESC to quit).
+        Transitions to the world view once a map is chosen.
+        """
         searcher = MapSearcher('./maps')
         found_maps = searcher.scan_maps()
         map_paths = list(found_maps.values())
@@ -68,15 +106,33 @@ class App:
             self.clock.tick(60)
         self.safe_quit()
 
-    def show_world(self, map_path: str = None):
+    def show_world(self, map_path: str | None = None) -> None:
+        """
+        Executes the main simulation loop and renders the interactive world.
+
+        Initializes the pathfinding heatmap, maps logical drones to graphical
+        entities, and enters the main event loop. Handles camera panning via
+        arrow keys and triggers simulation turns step-by-step when the Spacebar
+        is pressed.
+
+        Args:
+            map_path (str, optional): A direct path to a map file.
+                If not provided, uses the path selected from the
+                main menu (`self.current_map_path`).
+        """
         if map_path:
             self._load_and_pars(map_path)
-        else:
+        elif self.current_map_path is not None:
             self._load_and_pars(self.current_map_path)
+
+        if self.world is None:
+            return
 
         world_renderer = GfxWorldRenderer(self.screen, self.camera)
         world_renderer.build_scene(self.world)
 
+        if self.world.start_hub is None or self.world.end_hub is None:
+            return
         navigator = Navigator(start_hub=self.world.start_hub,
                               end_hub=self.world.end_hub,
                               zones=self.world.zones_map)
@@ -87,7 +143,10 @@ class App:
 
         # === 1. СОЗДАЕМ ГРАФИЧЕСКИХ ДРОНОВ ===
         gfx_drones_map = {}
+
         for logical_drone in self.world.drone_list:
+            if logical_drone.current_zone is None:
+                continue
             gfx_drone = GfxDrone(drone_id=logical_drone.drone_id,
                                  zone=logical_drone.current_zone)
             gfx_drones_map[logical_drone.drone_id] = gfx_drone
@@ -109,6 +168,8 @@ class App:
                         simulator.run_step()
 
                         for logical_drone in self.world.drone_list:
+                            if logical_drone.current_zone is None:
+                                continue
                             gfx_drone = gfx_drones_map[logical_drone.drone_id]
 
                             target_x = logical_drone.current_zone.zone_x

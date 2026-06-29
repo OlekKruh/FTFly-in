@@ -1,31 +1,54 @@
 from pathlib import Path
+from typing import Any
+
+import pygame as pg
 from src.gfx_entities.gfx_button import MenuButton
 from src.gfx_entities.gfx_text import TextLabel
 
 
 class MenuRenderer:
-    def __init__(self, screen):
+    """
+    Handles the dynamic construction and rendering of the main menu UI.
+
+    Parses map file paths to categorize levels by difficulty, generates
+    text headers for each category, and creates interactive buttons for
+    level selection, placing them dynamically based on screen resolution.
+    """
+    def __init__(self, screen: pg.Screen):
         self.screen = screen
-        self.menu_titles = []
-        self.menu_buttons = []
+        self.menu_titles: list[Any] = []
+        self.menu_buttons: list[Any] = []
 
     @staticmethod
-    def _pars_path(fali_path: str):
+    def _pars_path(fali_path: str) -> tuple[str, str]:
         """
-        fali_path = maps/hard/03_ultimate_challenge.txt
+        Extracts the level name and difficulty category from a file path.
+
+        Args:
+            fali_path (str): The string representation of the file path.
+
+        Returns:
+            tuple[str, str]: A tuple containing the level name
+                (without extension) and the directory name
+                representing the difficulty.
         """
         path = Path(fali_path)
         current_level_name = path.stem
         current_level_difficulty = path.parent.name
         return current_level_name, current_level_difficulty
 
-    def build_layout(self, found_maps: dict):
+    def build_layout(self, found_maps: dict[Any, Any]) -> None:
         """
-        found_maps = {
-        '1' = 'maps/easy/01_linear_path.txt'
-        '2' = 'maps/easy/02_simple_fork.txt'
-        ...
-        }
+        Constructs the graphical layout of titles and buttons.
+
+        Iterates through the discovered maps, grouping them by difficulty.
+        Calculates vertical spacing and font sizes dynamically using
+        percentages of the current screen height to ensure responsive
+        UI scaling.
+
+        Args:
+            found_maps (dict): A dictionary mapping string indices
+                to file paths.
         """
         scr_w = self.screen.get_width()
         scr_h = self.screen.get_height()
@@ -48,7 +71,14 @@ class MenuRenderer:
             self.menu_buttons.append(buton)
             cord_y += scr_h * 0.08  # padding after button text
 
-    def menu_render(self, menu_index: int):
+    def menu_render(self, menu_index: int) -> None:
+        """
+        Draws the menu background, difficulty titles, and level buttons.
+
+        Args:
+            menu_index (int): The index of the currently highlighted button,
+                used to trigger the selection visual state.
+        """
         self.screen.fill((30, 30, 30))
 
         for label in self.menu_titles:
