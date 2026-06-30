@@ -1,7 +1,7 @@
 .PHONY: install run debug clean lint lint-strict
 
 install:
-	uv pip install -r requirements.txt
+	python3 -m pip install -r requirements.txt
 
 run:
 	python3 -m src.main
